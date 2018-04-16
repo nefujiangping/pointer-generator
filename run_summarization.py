@@ -72,6 +72,8 @@ tf.app.flags.DEFINE_boolean('restore_best_model', False, 'Restore the best model
 # Debugging. See https://www.tensorflow.org/programmers_guide/debugger
 tf.app.flags.DEFINE_boolean('debug', False, "Run in tensorflow's debug mode (watches for NaN/inf values)")
 
+# For os.environ["CUDA_VISIBLE_DEVICES"], like '0','2,3'
+tf.app.flags.DEFINE_string('gpu_no', '', 'No.(s) of the gpu(s) to be used, e.g. 0,1')
 
 
 def calc_running_avg_loss(loss, running_avg_loss, summary_writer, step, decay=0.99):
@@ -265,6 +267,9 @@ def run_eval(model, batcher, vocab):
 
 
 def main(unused_argv):
+  assert FLAGS.gpu_no != '' , 'gpu_no must be assigned!'
+  os.environ["CUDA_VISIBLE_DEVICES"] = FLAGS.gpu_no
+
   if len(unused_argv) != 1: # prints a message if you've entered flags incorrectly
     raise Exception("Problem with flags: %s" % unused_argv)
 
